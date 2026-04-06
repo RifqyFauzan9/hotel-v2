@@ -9,3 +9,5 @@ export interface AuthResponse {
     accessToken: string;
     refreshToken: string;
 }
+
+export type AuthTokens = Pick<AuthResponse, "accessToken" | "refreshToken">;
