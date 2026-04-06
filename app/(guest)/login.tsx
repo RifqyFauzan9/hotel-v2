@@ -1,16 +1,49 @@
+import { di } from "@/src/core/di/container";
 import { Colors, Fonts } from "@/src/core/theme";
+import { LoginCredentialsInput } from "@/src/domain/schemas/auth.schema";
 import Button from "@/src/presentation/components/button";
+import { useAuth } from "@/src/presentation/contexts/auth.context";
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from "expo-router";
 import { useState } from 'react';
 import { Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginPage() {
-    const [email, setEmail] = useState<string>('');
+    const [identifier, setIdentifier] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const { login } = useAuth();
+    const router = useRouter();
+    const [error, setError] = useState<string>('');
 
-    function handleSubmit() { }
+    async function handleSubmit(data: LoginCredentialsInput) {
+        setIsLoading(true);
+
+        try {
+            const loginRespnose = await di.loginUseCase.execute(data);
+            const user = await di.getCurrentUserUseCase.execute();
+
+            console.log("✅ Login response:", {
+                user: loginRespnose.user,
+                hasTokens: !!loginRespnose.accessToken && !!loginRespnose.refreshToken,
+                accessToken: loginRespnose.accessToken ? "present" : "missing",
+            });
+
+            login(user, loginRespnose.accessToken);
+
+            console.log("✅ Auth context updated.")
+
+            console.log("✅ Navigating to home (tabs)...");
+
+            router.replace("/(auth)/(tabs)");
+        } catch (error: any) {
+            console.error("❌ Login error:", error);
+            setError(error.message || "Login failed. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     return (
         <SafeAreaView style={styles.wrapper}>
@@ -24,9 +57,9 @@ export default function LoginPage() {
                     <View style={styles.form}>
                         <Text style={styles.title}>Log in to your account</Text>
                         <TextInput
-                            value={email}
-                            onChangeText={setEmail}
-                            placeholder="Email"
+                            value={identifier}
+                            onChangeText={setIdentifier}
+                            placeholder="Email/Username"
                             style={styles.input}
                         />
 
@@ -40,7 +73,9 @@ export default function LoginPage() {
 
                         {/* <FormErrorBanner message={errors.root?.message} /> */}
 
-                        <Button disabled={isLoading} onPress={handleSubmit} label="Sign In" />
+                        {error && <Text>{error}</Text>}
+
+                        <Button disabled={isLoading} onPress={() => handleSubmit({ identifier, password })} label="Sign In" />
                     </View>
 
                     <View style={styles.footer}>

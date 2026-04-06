@@ -1,5 +1,13 @@
 import * as z from "zod";
 
+/**
+ * Zod Schema for Login Credentials
+ */
+export const LoginCredentialsSchema = z.object({
+    "identifier": z.string(),
+    "password": z.string(),
+});
+
 export const UserSchema = z.object({
     "id": z.string(),
     "email": z.string(),
@@ -7,9 +15,9 @@ export const UserSchema = z.object({
 });
 
 export const DataSchema = z.object({
+    "user": UserSchema,
     "token": z.string(),
     "refresh_token": z.string(),
-    "user": UserSchema,
 });
 
 export const AuthResponseSchema = z.object({
@@ -17,3 +25,8 @@ export const AuthResponseSchema = z.object({
     "data": DataSchema,
     "message": z.string(),
 });
+
+/**
+ * Type inference from schemas
+ */
+export type LoginCredentialsInput = z.infer<typeof LoginCredentialsSchema>;

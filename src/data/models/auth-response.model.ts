@@ -15,3 +15,10 @@ export interface AuthUserModel {
     email: string;
     username: string;
 }
+
+export interface LoginCredentialsModel {
+    identifier: string;
+    password: string;
+}
+
+export type AuthTokensModel = Pick<Data, "token" | "refresh_token">;

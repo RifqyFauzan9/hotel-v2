@@ -10,4 +10,9 @@ export interface AuthResponse {
     refreshToken: string;
 }
 
+export interface LoginCredentials {
+    identifier: string;
+    password: string;
+}
+
 export type AuthTokens = Pick<AuthResponse, "accessToken" | "refreshToken">;

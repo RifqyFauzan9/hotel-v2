@@ -20,6 +20,8 @@ export const Colors = {
         mutedForeground: '#98a0a6',
         success: '#dff7ee',
         successForeground: '#05583d',
+        warning: '#fff4e5',
+        warningForeground: '#806033',
     },
     dark: {
         text: '#ECEDEE',
