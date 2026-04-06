@@ -1,9 +1,11 @@
 import { Colors, Fonts } from '@/src/core/theme';
+import { formatInspectionStatus } from '@/src/core/utils/inspection.utils';
+import { InspectionStatus } from '@/src/domain/entities/inspection.entity';
 import Button from '@/src/presentation/components/button';
 import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
 
-export default function InspectionCard({ roomName, roomType, roomStatus }: { roomName: string; roomType: string; roomStatus: 'COMPLETED' | 'IN_PROGRESS' | 'OPEN' }) {
+export default function InspectionCard({ roomName, roomType, roomStatus }: { roomName: string; roomType: string; roomStatus: InspectionStatus }) {
     return (
         <View style={styles.card}>
             <View style={styles.cardBody}>
@@ -17,7 +19,7 @@ export default function InspectionCard({ roomName, roomType, roomStatus }: { roo
                     </View>
                 </View>
                 <View style={[styles.cardStatus, { backgroundColor: roomStatus === 'COMPLETED' ? Colors.light.success : Colors.light.warning }]}>
-                    <Text style={[styles.cardStatusText, { color: roomStatus === 'COMPLETED' ? Colors.light.successForeground : Colors.light.warningForeground }]}>{roomStatus}</Text>
+                    <Text style={[styles.cardStatusText, { color: roomStatus === 'COMPLETED' ? Colors.light.successForeground : Colors.light.warningForeground }]}>{formatInspectionStatus(roomStatus)}</Text>
                 </View>
             </View>
 

@@ -1,5 +1,6 @@
 import { Colors, Fonts } from "@/src/core/theme";
 import InspectionCard from "@/src/presentation/components/inspection-card";
+import InventoryCard from "@/src/presentation/components/inventory-card";
 import { useAuth } from "@/src/presentation/contexts/auth.context";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
@@ -10,8 +11,38 @@ export default function Index() {
   const { user } = useAuth();
   const [inspections, setInspections] = useState([]);
 
+  const [goodIssueItems] = useState([
+    {
+      label: 'Handuk',
+      value: 24,
+    },
+    {
+      label: 'Sabun',
+      value: 50,
+    },
+    {
+      label: 'Sandal',
+      value: 30,
+    }
+  ]);
+
+  const [trolleyItems] = useState([
+    {
+      label: 'Handuk',
+      value: 8,
+    },
+    {
+      label: 'Sabun',
+      value: 2,
+    },
+    {
+      label: 'Sandal',
+      value: 12,
+    }
+  ]);
+
   return (
-    <SafeAreaView style={styles.wrapper} edges={['top', 'left', 'right']}>
+    <SafeAreaView style={styles.wrapper}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Image source={require('@/assets/app/images/logo.png')} style={styles.headerImage} alt="User's image" />
@@ -33,10 +64,20 @@ export default function Index() {
         </View>
         <View style={styles.section}>
           <SectionTitle label="Status Inventaris" buttonLabel="Kelola" onPress={() => { }} />
-          <View>
-            <View style={styles.inventoryCard}>
-              <View style={styles.inventoryCardHeader}></View>
-            </View>
+          <View style={styles.inventoryContainer}>
+            {/* Good Issue Card */}
+            <InventoryCard
+              label="Good Issue"
+              icon="cube-outline"
+              items={goodIssueItems}
+            />
+
+            {/* Troly Card */}
+            <InventoryCard
+              label="Troli Anda"
+              icon="cart-outline"
+              items={trolleyItems}
+            />
           </View>
         </View>
       </ScrollView>
@@ -69,7 +110,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: 'white',
-    elevation: 1,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.light.border,
     paddingHorizontal: 18,
     paddingVertical: 20,
   },
@@ -119,15 +161,9 @@ const styles = StyleSheet.create({
     fontFamily: Fonts?.sans,
     color: Colors.light.tint,
   },
-  inventoryCard: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: 'white',
-    elevation: 1,
-  },
-  inventoryCardHeader: {
+  inventoryContainer: {
     flexDirection: 'row',
+    gap: 12,
     alignItems: 'center',
-    gap: 8,
-  }
+  },
 });

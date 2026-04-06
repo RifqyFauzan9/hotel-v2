@@ -1,4 +1,5 @@
 import { config } from "@/glustack-ui.config";
+import { Colors } from "@/src/core/theme";
 import { AuthProvider, useAuth } from '@/src/presentation/contexts/auth.context';
 import { ToastProvider } from '@/src/presentation/contexts/toast.context';
 import { GluestackUIProvider } from '@gluestack-ui/themed';
@@ -9,7 +10,6 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
-import { SafeAreaProvider } from "react-native-safe-area-context";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -37,13 +37,12 @@ function RootLayoutNav() {
       router.replace("/(auth)/(tabs)");
       return;
     }
-  }, [isAuthenticated, isLoading]);
+  }, [isAuthenticated, isLoading, segments]);
 
-  // Show loading screen while checking authentication
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#14b8a6" />
+        <ActivityIndicator size="large" color={Colors.light.tint} />
       </View>
     );
   }
@@ -80,10 +79,8 @@ export default function RootLayout() {
       <ToastProvider>
         <AuthProvider>
           <ThemeProvider value={DefaultTheme}>
-            <SafeAreaProvider>
-              <RootLayoutNav />
-              <StatusBar style="dark" />
-            </SafeAreaProvider>
+            <RootLayoutNav />
+            <StatusBar style="dark" />
           </ThemeProvider>
         </AuthProvider>
       </ToastProvider>
