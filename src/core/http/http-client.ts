@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { config } from "../config/app.config";
+import { AUTH_EVENTS, authEvents } from "../events/auth-event";
 import { tokenStorage } from "../storage/token-storage";
 
 /**
@@ -120,7 +121,9 @@ export class AxiosHttpClient implements IHttpClient {
                     if (status === 401 && isRefreshRequest) {
                         console.log("🔒🔒🔒 REFRESH TOKEN EXPIRED - LOGGING OUT NOW!");
                         await tokenStorage.clearTokens();
-                        console.log("🔒 Tokens cleared.");
+                        console.log("🔒 Tokens cleared, emitting SESSION_EXPIRED...");
+                        authEvents.emit(AUTH_EVENTS.SESSION_EXPIRED);
+                        console.log("🔒 SESSION_EXPIRED emitted!");
                         return Promise.reject({
                             status,
                             message: "Session expired",
@@ -161,11 +164,14 @@ export class AxiosHttpClient implements IHttpClient {
                                     "🔒 No refresh token available - triggering logout"
                                 );
                                 await tokenStorage.clearTokens();
+                                authEvents.emit(AUTH_EVENTS.SESSION_EXPIRED);
                                 throw new Error("No refresh token available");
                             }
 
                             console.log("🔄 Calling /auth/refresh...");
-                            const response = await this.axiosInstance.post("/auth/refresh", { refreshToken });
+                            const response = await this.axiosInstance.post("/auth/refresh", {
+                                refresh_token: refreshToken,
+                            });
 
                             console.log("✅ Refresh successful!");
                             // Extract new tokens from response
@@ -191,6 +197,14 @@ export class AxiosHttpClient implements IHttpClient {
                             });
 
                             this.processQueue(refreshError, null);
+
+                            // The SESSION_EXPIRED event should already be emitted by the interceptor
+                            // when the refresh request returns 401, but emit again just in case
+                            if (!authEvents.sessionExpiredFlag) {
+                                console.log("🔒 Emitting SESSION_EXPIRED from catch block");
+                                await tokenStorage.clearTokens();
+                                authEvents.emit(AUTH_EVENTS.SESSION_EXPIRED);
+                            }
 
                             return Promise.reject(refreshError);
                         } finally {
