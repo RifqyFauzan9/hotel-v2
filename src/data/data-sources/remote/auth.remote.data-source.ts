@@ -1,15 +1,12 @@
 import { IHttpClient } from "@/src/core/http/http-client";
 import { ZodError } from "zod";
 import { AuthResponseModel, AuthTokensModel, LoginCredentialsModel } from "../../models/auth-response.model";
-import { UserModel, UserResponseModel } from "../../models/user.model";
 import { AuthResponseSchema } from "../../schemas/auth-model.schema";
-import { UserResponseSchema } from "../../schemas/user-model.schema";
 
 export interface IAuthRemoteDataSource {
     login(credentials: LoginCredentialsModel): Promise<AuthResponseModel>;
     logout(): Promise<void>;
     refreshToken(refreshToken: string): Promise<AuthTokensModel>;
-    getCurrentUser(): Promise<UserModel>;
 }
 
 export class AuthRemoteDataSource implements IAuthRemoteDataSource {
@@ -76,20 +73,4 @@ export class AuthRemoteDataSource implements IAuthRemoteDataSource {
     refreshToken(refreshToken: string): Promise<AuthTokensModel> {
         throw new Error("Method not implemented.");
     }
-
-    async getCurrentUser(): Promise<UserModel> {
-        try {
-            const response = await this.httpClient.get<UserResponseModel>("/users/me");
-
-            // Validated API response
-            const validated = UserResponseSchema.parse(response);
-            return validated.data;
-        } catch (error: any) {
-            if (error instanceof ZodError) {
-                throw new Error("Invalid response from server");
-            }
-            throw new Error(error.message || "Failed to fetch user");
-        }
-    }
-
 }

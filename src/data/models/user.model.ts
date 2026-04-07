@@ -11,7 +11,7 @@ export interface UserModel {
     departement: string;
     is_active: boolean;
     avatar_id: string;
-    avatar_url: string;
+    avatar_url: string | null;
     email_verified: null;
     created_at: Date;
     updated_at: Date;

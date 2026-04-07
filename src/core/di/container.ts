@@ -5,14 +5,18 @@
 
 import { AuthRemoteDataSource } from "@/src/data/data-sources/remote/auth.remote.data-source";
 import { InspectionOrderRemoteDataSource } from "@/src/data/data-sources/remote/inspection-order.remote.data-source";
+import { IUserRemoteDataSource, UserRemoteDataSource } from "@/src/data/data-sources/remote/user.remote.data-source";
 import { AuthRepository } from "@/src/data/repositories/auth.repository.impl";
 import { InspectionOrderRepository } from "@/src/data/repositories/inspection-order.repository.impl";
+import { UserRepository } from "@/src/data/repositories/user.repository.impl";
 import { IAuthRepository } from "@/src/domain/repositories/auth.repository";
 import { IInspectionOrderRepository } from "@/src/domain/repositories/inspection-order.repository";
-import { GetCurrentUserUseCase } from "@/src/domain/use-cases/auth/get-current-user.use-case";
+import { IUserRepository } from "@/src/domain/repositories/user.repository";
 import { LoginUseCase } from "@/src/domain/use-cases/auth/login.use-case";
 import { GetInspectionOrderByIdUseCase } from "@/src/domain/use-cases/inspection-orders/get-inspection-order-by-id.use-case";
 import { GetInspectionOrdersUseCase } from "@/src/domain/use-cases/inspection-orders/get-inspection-orders.use-case";
+import { GetCurrentUserUseCase } from "@/src/domain/use-cases/user/get-current-user.use-case";
+import { UpdateUserProfileUseCase } from "@/src/domain/use-cases/user/update-user-profile.use-case";
 import { httpClient } from "../http/http-client";
 import { tokenStorage } from "../storage/token-storage";
 
@@ -31,10 +35,12 @@ class DIContainer {
     // Repositories
     private _authRepository?: IAuthRepository;
     private _inspectionOrderRepository?: IInspectionOrderRepository;
+    private _userRepository?: IUserRepository;
 
     // Data Sources
     private _authRemoteDataSource?: AuthRemoteDataSource;
     private _inspectionOrderRemoteDataSource?: InspectionOrderRemoteDataSource;
+    private _userRemoteDataSource?: UserRemoteDataSource;
 
     // Auth Use Cases
     private _loginUseCase?: LoginUseCase;
@@ -43,6 +49,9 @@ class DIContainer {
     // Inspection Order Use Cases
     private _getInspectionOrdersUseCase?: GetInspectionOrdersUseCase;
     private _getInspectionOrderByIdUseCase?: GetInspectionOrderByIdUseCase;
+
+    // User Use Cases
+    private _updateUserProfileUseCase?: UpdateUserProfileUseCase;
 
     // Data Sources
     get authRemoteDataSource(): AuthRemoteDataSource {
@@ -59,6 +68,13 @@ class DIContainer {
         }
 
         return this._inspectionOrderRemoteDataSource;
+    }
+
+    get userRemoteDataSource(): IUserRemoteDataSource {
+        if (!this._userRemoteDataSource) {
+            this._userRemoteDataSource = new UserRemoteDataSource(httpClient);
+        }
+        return this._userRemoteDataSource;
     }
 
 
@@ -81,6 +97,13 @@ class DIContainer {
         return this._inspectionOrderRepository;
     }
 
+    get userRepository(): IUserRepository {
+        if (!this._userRepository) {
+            this._userRepository = new UserRepository(this.userRemoteDataSource);
+        }
+        return this._userRepository;
+    }
+
     // Use Cases - Auth
     get loginUseCase(): LoginUseCase {
         if (!this._loginUseCase) {
@@ -90,14 +113,7 @@ class DIContainer {
         return this._loginUseCase;
     }
 
-    get getCurrentUserUseCase(): GetCurrentUserUseCase {
-        if (!this._getCurrentUserUseCase) {
-            this._getCurrentUserUseCase = new GetCurrentUserUseCase(this.authRepository);
-        }
-
-        return this._getCurrentUserUseCase;
-    }
-
+    // Use Cases - Inspection Order
     get getInspectionOrdersUseCase(): GetInspectionOrdersUseCase {
         if (!this._getInspectionOrdersUseCase) {
             this._getInspectionOrdersUseCase = new GetInspectionOrdersUseCase(this.inspectionOrderRepository);
@@ -111,6 +127,22 @@ class DIContainer {
             this._getInspectionOrderByIdUseCase = new GetInspectionOrderByIdUseCase(this.inspectionOrderRepository);
         }
         return this._getInspectionOrderByIdUseCase;
+    }
+
+    // Use Cases - User
+    get getCurrentUserUseCase(): GetCurrentUserUseCase {
+        if (!this._getCurrentUserUseCase) {
+            this._getCurrentUserUseCase = new GetCurrentUserUseCase(this.userRepository);
+        }
+
+        return this._getCurrentUserUseCase;
+    }
+
+    get updateUserProfileUseCase(): UpdateUserProfileUseCase {
+        if (!this._updateUserProfileUseCase) {
+            this._updateUserProfileUseCase = new UpdateUserProfileUseCase(this.userRepository);
+        }
+        return this._updateUserProfileUseCase;
     }
 
     // Reset for testing

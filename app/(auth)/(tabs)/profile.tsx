@@ -18,60 +18,26 @@ export default function ProfilePage() {
     const router = useRouter();
 
     const [options] = useState<ActionButton[]>([
-        { icon: 'settings-outline', label: 'Edit Profil', onPress: () => { } },
+        { icon: 'settings-outline', label: 'Edit Profil', onPress: () => router.push('/(auth)/profile/edit') },
         { icon: 'lock-closed-outline', label: 'Ganti Kata Sandi', onPress: () => { } },
         // { icon: 'notifications-outline', label: 'Notifikasi', onPress: () => { } },
     ]);
 
     return (
-        <SafeAreaView style={{ flex: 1 }} edges={['top', 'right', 'left']}>
+        <SafeAreaView style={styles.wrapper} edges={['top', 'right', 'left']}>
             <AppHeader label="Profil" />
 
             <ScrollView contentContainerStyle={styles.content}>
-                <View style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: 'white',
-                    gap: 6,
-                    borderBottomColor: Colors.light.border,
-                    borderBottomWidth: 1,
-                    paddingVertical: 32,
-                }}>
-                    <View style={{
-                        padding: 4,
-                        borderRadius: '50%',
-                        elevation: 3,
-                        backgroundColor: Colors.light.background,
-                        marginBottom: 12
-                    }}>
-                        <Image source={require('@/assets/app/images/person.jpeg')} style={{ width: 90, height: 90, borderRadius: 50 }} />
+                <View style={styles.profileSection}>
+                    <View style={styles.imageWrapper}>
+                        <Image source={require('@/assets/app/images/person.jpeg')} style={styles.userImage} alt="User's profile picture" />
                     </View>
-                    <Text style={{
-                        fontSize: 18,
-                        fontFamily: Fonts?.sansSB,
-                    }}>{user?.profile.name || 'Guest'}</Text>
-                    <Text style={{
-                        fontSize: 14,
-                        color: Colors.light.tint,
-                        fontFamily: Fonts?.sans,
-                    }}>{user?.departement || 'Inspektor'}</Text>
-                    <Text style={{
-                        fontSize: 14,
-                        color: Colors.light.mutedForeground,
-                        fontFamily: Fonts?.sans,
-                    }}>ID: {user?.id.split('-')[0] || 'none'}</Text>
+                    <Text style={styles.userName}>{user?.profile.name || 'Guest'}</Text>
+                    <Text style={styles.userRole}>{user?.departement || 'Inspektor'}</Text>
+                    <Text style={styles.userId}>ID: {user?.id.split('-')[0] || 'none'}</Text>
                 </View>
-                <View style={{
-                    padding: 16,
-                    backgroundColor: Colors.light.background,
-                    flex: 2,
-                    gap: 14,
-                }}>
-                    <Text style={{
-                        color: Colors.light.mutedForeground,
-                        fontFamily: Fonts?.sansSB,
-                        fontSize: 14,
-                    }}>AKUN</Text>
+                <View style={styles.actionButtonSection}>
+                    <Text style={styles.actionButtonSectionLabel}>AKUN</Text>
                     <View style={styles.actionButtonList}>
                         {options.map((item, index) => {
                             const isFirst = index === 0;
@@ -94,11 +60,7 @@ export default function ProfilePage() {
                                     key={item.label}
                                     onPress={item.onPress}
                                 >
-                                    <View style={{
-                                        padding: 12,
-                                        borderRadius: 10,
-                                        backgroundColor: Colors.light.muted
-                                    }}>
+                                    <View style={styles.actionButtonItemIcon}>
                                         <Ionicons name={item.icon} size={18} color={Colors.light.foreground} />
                                     </View>
                                     <View style={styles.actionButtonItemContent}>
@@ -116,8 +78,55 @@ export default function ProfilePage() {
 }
 
 const styles = StyleSheet.create({
+    wrapper: { flex: 1 },
     content: {
         flex: 1,
+    },
+    profileSection: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'white',
+        gap: 6,
+        borderBottomColor: Colors.light.border,
+        borderBottomWidth: 1,
+        paddingVertical: 32,
+    },
+    imageWrapper: {
+        padding: 4,
+        borderRadius: '50%',
+        elevation: 3,
+        backgroundColor: Colors.light.background,
+        marginBottom: 12
+    },
+    userImage: {
+        width: 90,
+        height: 90,
+        borderRadius: 50
+    },
+    userName: {
+        fontSize: 18,
+        fontFamily: Fonts?.sansSB,
+    },
+    userRole: {
+        fontSize: 14,
+        color: Colors.light.tint,
+        fontFamily: Fonts?.sans,
+    },
+    userId: {
+        fontSize: 14,
+        color: Colors.light.mutedForeground,
+        fontFamily: Fonts?.sans,
+    },
+    actionButtonSection: {
+        padding: 16,
+        backgroundColor: Colors.light.background,
+        flex: 1,
+        gap: 14,
+    },
+    actionButtonSectionLabel: {
+        color: Colors.light.mutedForeground,
+        fontFamily: Fonts?.sansSB,
+        fontSize: 14,
     },
     actionButtonList: {},
     actionButtonItem: {
@@ -128,6 +137,11 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: Colors.light.border,
         padding: 16,
+    },
+    actionButtonItemIcon: {
+        padding: 12,
+        borderRadius: 10,
+        backgroundColor: Colors.light.muted
     },
     actionButtonItemTitle: {
         fontSize: 16,

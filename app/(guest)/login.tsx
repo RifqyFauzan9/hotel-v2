@@ -2,11 +2,12 @@ import { di } from "@/src/core/di/container";
 import { Colors, Fonts } from "@/src/core/theme";
 import { LoginCredentialsInput } from "@/src/domain/schemas/auth.schema";
 import Button from "@/src/presentation/components/button";
+import FormInput from "@/src/presentation/components/form-input";
 import { useAuth } from "@/src/presentation/contexts/auth.context";
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from "expo-router";
 import { useState } from 'react';
-import { Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginPage() {
@@ -56,19 +57,17 @@ export default function LoginPage() {
 
                     <View style={styles.form}>
                         <Text style={styles.title}>Log in to your account</Text>
-                        <TextInput
+                        <FormInput
                             value={identifier}
                             onChangeText={setIdentifier}
                             placeholder="Email/Username"
-                            style={styles.input}
                         />
 
-                        <TextInput
+                        <FormInput
                             value={password}
                             onChangeText={setPassword}
                             placeholder="Password"
-                            secureTextEntry
-                            style={styles.input}
+                            isPasswordField
                         />
 
                         {/* <FormErrorBanner message={errors.root?.message} /> */}
@@ -119,7 +118,7 @@ const styles = StyleSheet.create({
         marginBottom: 18,
     },
     form: {
-        gap: 18,
+        gap: 16,
         marginBottom: 32,
     },
     title: {

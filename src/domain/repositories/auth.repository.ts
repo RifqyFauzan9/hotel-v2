@@ -1,5 +1,4 @@
 import { AuthResponse, AuthTokens, LoginCredentials } from "../entities/auth.entity";
-import { User } from "../entities/user.entity";
 
 
 export interface IAuthRepository {
@@ -17,9 +16,4 @@ export interface IAuthRepository {
      * Refresh the access token
      */
     refreshToken(refreshToken: string): Promise<AuthTokens>;
-
-    /**
-     * Get the currently authenticated user
-     */
-    getCurrentUser(): Promise<User>;
 }

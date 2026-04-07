@@ -76,7 +76,9 @@ export default function Index() {
           </View>
         </View>
         <View style={styles.headerNotifButton}>
-          <Ionicons name="notifications-outline" size={24} color='black' />
+          <Pressable>
+            <Ionicons name="log-out-outline" size={24} color='black' />
+          </Pressable>
         </View>
       </View>
 
