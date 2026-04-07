@@ -5,7 +5,14 @@ import Button from '@/src/presentation/components/button';
 import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
 
-export default function InspectionCard({ roomName, roomType, roomStatus }: { roomName: string; roomType: string; roomStatus: InspectionStatus }) {
+type Props = {
+    roomName: string;
+    roomType: string;
+    roomStatus: InspectionStatus,
+    onDetailPress?: () => void;
+};
+
+export default function InspectionCard({ roomName, roomType, roomStatus, onDetailPress }: Props) {
     const backgroundStatusColor = roomStatus === 'COMPLETED' ? Colors.light.success : roomStatus === 'CANCELLED' ? Colors.light.destructive : roomStatus === 'IN_PROGRESS' ? Colors.light.warning : roomStatus === 'OPEN' ? Colors.light.muted : roomStatus === 'PENDING' ? Colors.light.warning : roomStatus === 'REJECTED' ? Colors.light.destructive : roomStatus === 'VERIFIED' ? Colors.light.success : Colors.light.destructive;
     const foregroundStatusColor = roomStatus === 'COMPLETED' ? Colors.light.successForeground : roomStatus === 'CANCELLED' ? Colors.light.destructiveForeground : roomStatus === 'IN_PROGRESS' ? Colors.light.warningForeground : roomStatus === 'OPEN' ? Colors.light.mutedForeground : roomStatus === 'PENDING' ? Colors.light.warningForeground : roomStatus === 'REJECTED' ? Colors.light.destructiveForeground : roomStatus === 'VERIFIED' ? Colors.light.successForeground : Colors.light.destructiveForeground;
 
@@ -27,7 +34,7 @@ export default function InspectionCard({ roomName, roomType, roomStatus }: { roo
             </View>
 
             <View style={styles.cardFooter}>
-                <Button label="Detail" onPress={() => { }} variant="secondary" />
+                <Button label="Detail" onPress={onDetailPress} variant="secondary" />
                 <Button label="Start" onPress={() => { }} variant="primary" />
             </View>
         </View>

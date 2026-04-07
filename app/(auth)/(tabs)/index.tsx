@@ -5,6 +5,7 @@ import InspectionCard from "@/src/presentation/components/inspection-card";
 import InventoryCard from "@/src/presentation/components/inventory-card";
 import { useAuth } from "@/src/presentation/contexts/auth.context";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,6 +14,7 @@ export default function Index() {
   const { user } = useAuth();
   const [inspectionOrders, setInspectionOrders] = useState<InspectionOrder[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const router = useRouter();
 
   const [goodIssueItems] = useState([
     {
@@ -83,7 +85,15 @@ export default function Index() {
           <SectionTitle label="Daftar Inspeksi" buttonLabel="Lihat Semua" onPress={() => { }} />
           {isLoading ? (
             <ActivityIndicator size='large' color={Colors.light.tint} />
-          ) : inspectionOrders.slice(0, 2).map(i => <InspectionCard key={i.id} roomName={i.asset_name} roomStatus={i.status} roomType={i.asset_type} />)}
+          ) : inspectionOrders.slice(0, 2).map(i => (
+            <InspectionCard
+              key={i.id}
+              roomName={i.asset_name}
+              roomStatus={i.status}
+              roomType={i.asset_type}
+              onDetailPress={() => router.push(`../inspection/${i.id}`)}
+            />
+          ))}
         </View>
         <View style={styles.section}>
           <SectionTitle label="Status Inventaris" buttonLabel="Kelola" onPress={() => { }} />

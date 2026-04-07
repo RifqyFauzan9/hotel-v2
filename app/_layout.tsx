@@ -10,11 +10,12 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 SplashScreen.preventAutoHideAsync();
 
 export const unstable_settings = {
-  initialRouteName: "index",
+  initialRouteName: "(guest)",
 };
 
 function RootLayoutNav() {
@@ -76,14 +77,16 @@ export default function RootLayout() {
 
   return (
     <GluestackUIProvider config={config}>
-      <ToastProvider>
-        <AuthProvider>
-          <ThemeProvider value={DefaultTheme}>
-            <RootLayoutNav />
-            <StatusBar style="dark" />
-          </ThemeProvider>
-        </AuthProvider>
-      </ToastProvider>
+      <SafeAreaProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <ThemeProvider value={DefaultTheme}>
+              <RootLayoutNav />
+              <StatusBar style="dark" />
+            </ThemeProvider>
+          </AuthProvider>
+        </ToastProvider>
+      </SafeAreaProvider>
     </GluestackUIProvider>
   )
 }

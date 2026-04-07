@@ -1,7 +1,14 @@
 import { Colors, Fonts } from '@/src/core/theme';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
-export default function Button({ onPress, label, disabled = false, variant = 'primary' }: { onPress: () => void; label: string; disabled?: boolean; variant?: 'primary' | 'secondary' }) {
+type Props = {
+    onPress?: () => void;
+    label: string;
+    disabled?: boolean;
+    variant?: 'primary' | 'secondary',
+};
+
+export default function Button({ onPress, label, disabled = false, variant = 'primary' }: Props) {
     if (variant === 'primary') {
         return (
             <Pressable style={[styles.button, { opacity: disabled ? 0.4 : 1 }]} onPress={onPress} disabled={disabled}>

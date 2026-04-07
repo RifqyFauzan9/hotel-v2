@@ -170,7 +170,7 @@ export class AxiosHttpClient implements IHttpClient {
 
                             console.log("🔄 Calling /auth/refresh...");
                             const response = await this.axiosInstance.post("/auth/refresh", {
-                                refresh_token: refreshToken,
+                                refreshToken
                             });
 
                             console.log("✅ Refresh successful!");

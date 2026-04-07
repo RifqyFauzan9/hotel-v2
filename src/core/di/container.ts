@@ -11,7 +11,8 @@ import { IAuthRepository } from "@/src/domain/repositories/auth.repository";
 import { IInspectionOrderRepository } from "@/src/domain/repositories/inspection-order.repository";
 import { GetCurrentUserUseCase } from "@/src/domain/use-cases/auth/get-current-user.use-case";
 import { LoginUseCase } from "@/src/domain/use-cases/auth/login.use-case";
-import { GetInspectionOrdersUseCase } from "@/src/domain/use-cases/inspection-orders/inspection-order.use-case";
+import { GetInspectionOrderByIdUseCase } from "@/src/domain/use-cases/inspection-orders/get-inspection-order-by-id.use-case";
+import { GetInspectionOrdersUseCase } from "@/src/domain/use-cases/inspection-orders/get-inspection-orders.use-case";
 import { httpClient } from "../http/http-client";
 import { tokenStorage } from "../storage/token-storage";
 
@@ -41,7 +42,7 @@ class DIContainer {
 
     // Inspection Order Use Cases
     private _getInspectionOrdersUseCase?: GetInspectionOrdersUseCase;
-    // private _getInspectionOrderByIdUseCase?: GetInspectionOrderByIdUseCase;
+    private _getInspectionOrderByIdUseCase?: GetInspectionOrderByIdUseCase;
 
     // Data Sources
     get authRemoteDataSource(): AuthRemoteDataSource {
@@ -105,6 +106,13 @@ class DIContainer {
         return this._getInspectionOrdersUseCase;
     }
 
+    get getInspectionOrderByIdUseCase(): GetInspectionOrderByIdUseCase {
+        if (!this._getInspectionOrderByIdUseCase) {
+            this._getInspectionOrderByIdUseCase = new GetInspectionOrderByIdUseCase(this.inspectionOrderRepository);
+        }
+        return this._getInspectionOrderByIdUseCase;
+    }
+
     // Reset for testing
     reset(): void {
         this._authRemoteDataSource = undefined;
@@ -114,6 +122,7 @@ class DIContainer {
         this._inspectionOrderRemoteDataSource = undefined;
         this._inspectionOrderRepository = undefined;
         this._getInspectionOrdersUseCase = undefined;
+        this._getInspectionOrderByIdUseCase = undefined;
     }
 }
 
