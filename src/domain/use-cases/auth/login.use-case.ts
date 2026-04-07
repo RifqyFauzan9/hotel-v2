@@ -1,5 +1,5 @@
 
-import { LoginCredentialsSchema } from "@/src/data/schemas/auth.schema";
+import { LoginCredentialsSchema } from "@/src/data/schemas/auth-model.schema";
 import { ZodError } from "zod";
 import { AuthResponse, LoginCredentials } from "../../entities/auth.entity";
 import { IAuthRepository } from "../../repositories/auth.repository";

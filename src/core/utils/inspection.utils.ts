@@ -1,4 +1,4 @@
-import { InspectionStatus } from "@/src/domain/entities/inspection.entity";
+import { InspectionStatus } from "@/src/domain/entities/inspection-order.entity";
 
 export function formatInspectionStatus(status: InspectionStatus) {
     switch (status) {
@@ -8,6 +8,14 @@ export function formatInspectionStatus(status: InspectionStatus) {
             return 'In Progress';
         case 'OPEN':
             return 'Open';
+        case 'CANCELLED':
+            return 'Cancelled';
+        case 'PENDING':
+            return 'Pending';
+        case 'REJECTED':
+            return 'Rejected';
+        case 'VERIFIED':
+            return 'Verified';
         default:
             return 'Unknown'
     }

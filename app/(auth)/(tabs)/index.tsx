@@ -1,15 +1,18 @@
+import { di } from "@/src/core/di/container";
 import { Colors, Fonts } from "@/src/core/theme";
+import { InspectionOrder } from "@/src/domain/entities/inspection-order.entity";
 import InspectionCard from "@/src/presentation/components/inspection-card";
 import InventoryCard from "@/src/presentation/components/inventory-card";
 import { useAuth } from "@/src/presentation/contexts/auth.context";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const { user } = useAuth();
-  const [inspections, setInspections] = useState([]);
+  const [inspectionOrders, setInspectionOrders] = useState<InspectionOrder[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [goodIssueItems] = useState([
     {
@@ -41,8 +44,27 @@ export default function Index() {
     }
   ]);
 
+  useEffect(() => {
+    const loadInspetionOrders = async () => {
+      setIsLoading(true);
+      try {
+        const result = await di.getInspectionOrdersUseCase.execute({ page: 1, limit: 10 });
+        setInspectionOrders(result.data || []);
+
+      } catch (apiError) {
+        console.log('Gagal fetch inspection orders: ', apiError);
+        throw apiError;
+
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadInspetionOrders();
+  }, []);
+
   return (
-    <SafeAreaView style={styles.wrapper}>
+    <SafeAreaView style={styles.wrapper} edges={['top', 'left', 'right']}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Image source={require('@/assets/app/images/logo.png')} style={styles.headerImage} alt="User's image" />
@@ -59,8 +81,9 @@ export default function Index() {
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.section}>
           <SectionTitle label="Daftar Inspeksi" buttonLabel="Lihat Semua" onPress={() => { }} />
-          <InspectionCard roomName={'Kamar 302'} roomType={'Deluxe King'} roomStatus={'COMPLETED'} />
-          <InspectionCard roomName={'Kamar 305'} roomType={'Standard Twin'} roomStatus={'IN_PROGRESS'} />
+          {isLoading ? (
+            <ActivityIndicator size='large' color={Colors.light.tint} />
+          ) : inspectionOrders.slice(0, 2).map(i => <InspectionCard key={i.id} roomName={i.asset_name} roomStatus={i.status} roomType={i.asset_type} />)}
         </View>
         <View style={styles.section}>
           <SectionTitle label="Status Inventaris" buttonLabel="Kelola" onPress={() => { }} />

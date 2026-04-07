@@ -4,10 +4,14 @@
  */
 
 import { AuthRemoteDataSource } from "@/src/data/data-sources/remote/auth.remote.data-source";
+import { InspectionOrderRemoteDataSource } from "@/src/data/data-sources/remote/inspection-order.remote.data-source";
 import { AuthRepository } from "@/src/data/repositories/auth.repository.impl";
+import { InspectionOrderRepository } from "@/src/data/repositories/inspection-order.repository.impl";
 import { IAuthRepository } from "@/src/domain/repositories/auth.repository";
+import { IInspectionOrderRepository } from "@/src/domain/repositories/inspection-order.repository";
 import { GetCurrentUserUseCase } from "@/src/domain/use-cases/auth/get-current-user.use-case";
 import { LoginUseCase } from "@/src/domain/use-cases/auth/login.use-case";
+import { GetInspectionOrdersUseCase } from "@/src/domain/use-cases/inspection-orders/inspection-order.use-case";
 import { httpClient } from "../http/http-client";
 import { tokenStorage } from "../storage/token-storage";
 
@@ -25,13 +29,19 @@ class DIContainer {
 
     // Repositories
     private _authRepository?: IAuthRepository;
+    private _inspectionOrderRepository?: IInspectionOrderRepository;
 
     // Data Sources
     private _authRemoteDataSource?: AuthRemoteDataSource;
+    private _inspectionOrderRemoteDataSource?: InspectionOrderRemoteDataSource;
 
     // Auth Use Cases
     private _loginUseCase?: LoginUseCase;
     private _getCurrentUserUseCase?: GetCurrentUserUseCase;
+
+    // Inspection Order Use Cases
+    private _getInspectionOrdersUseCase?: GetInspectionOrdersUseCase;
+    // private _getInspectionOrderByIdUseCase?: GetInspectionOrderByIdUseCase;
 
     // Data Sources
     get authRemoteDataSource(): AuthRemoteDataSource {
@@ -40,6 +50,14 @@ class DIContainer {
         }
 
         return this._authRemoteDataSource;
+    }
+
+    get inspectionOrderRemoteDataSource(): InspectionOrderRemoteDataSource {
+        if (!this._inspectionOrderRemoteDataSource) {
+            this._inspectionOrderRemoteDataSource = new InspectionOrderRemoteDataSource(httpClient);
+        }
+
+        return this._inspectionOrderRemoteDataSource;
     }
 
 
@@ -52,6 +70,14 @@ class DIContainer {
             );
         }
         return this._authRepository;
+    }
+
+    get inspectionOrderRepository(): IInspectionOrderRepository {
+        if (!this._inspectionOrderRepository) {
+            this._inspectionOrderRepository = new InspectionOrderRepository(this.inspectionOrderRemoteDataSource);
+        }
+
+        return this._inspectionOrderRepository;
     }
 
     // Use Cases - Auth
@@ -71,11 +97,23 @@ class DIContainer {
         return this._getCurrentUserUseCase;
     }
 
+    get getInspectionOrdersUseCase(): GetInspectionOrdersUseCase {
+        if (!this._getInspectionOrdersUseCase) {
+            this._getInspectionOrdersUseCase = new GetInspectionOrdersUseCase(this.inspectionOrderRepository);
+        }
+
+        return this._getInspectionOrdersUseCase;
+    }
+
     // Reset for testing
     reset(): void {
         this._authRemoteDataSource = undefined;
         this._authRepository = undefined;
         this._loginUseCase = undefined;
+        this._getCurrentUserUseCase = undefined;
+        this._inspectionOrderRemoteDataSource = undefined;
+        this._inspectionOrderRepository = undefined;
+        this._getInspectionOrdersUseCase = undefined;
     }
 }
 

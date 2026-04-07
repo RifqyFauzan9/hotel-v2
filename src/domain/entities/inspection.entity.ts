@@ -1,1 +1,0 @@
-export type InspectionStatus = 'COMPLETED' | 'IN_PROGRESS' | 'OPEN';

@@ -22,6 +22,8 @@ export const Colors = {
         successForeground: '#05583d',
         warning: '#fff4e5',
         warningForeground: '#806033',
+        destructive: '#ffe9e9',
+        destructiveForeground: '#8b1e1e',
         border: '#00000014',
     },
     dark: {
