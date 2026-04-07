@@ -8,12 +8,20 @@ export default function TabsLayout() {
         <Tabs screenOptions={{
             tabBarActiveTintColor: Colors.light.tint,
             headerShown: false,
+            tabBarIconStyle: { marginBottom: 2, marginTop: 4 },
+            tabBarStyle: { height: 60 }
         }}>
             <Tabs.Screen
                 name="index"
                 options={{
                     title: 'Home',
-                    tabBarIcon: ({ color }) => <Ionicons name="home-outline" size={28} color={color} />
+                    tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'home' : 'home-outline'} size={24} color={color} />
+                }} />
+            <Tabs.Screen
+                name="profile"
+                options={{
+                    title: 'Profile',
+                    tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'person' : 'person-outline'} size={24} color={color} />
                 }} />
         </Tabs>
     );

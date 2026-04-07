@@ -69,7 +69,7 @@ export default function Index() {
     <SafeAreaView style={styles.wrapper} edges={['top', 'left', 'right']}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Image source={require('@/assets/app/images/logo.png')} style={styles.headerImage} alt="User's image" />
+          <Image source={require('@/assets/app/images/person.jpeg')} style={styles.headerImage} alt="User's image" />
           <View style={styles.headerGreeting}>
             <Text style={styles.headerGreetingLabel}>Selamat Pagi,</Text>
             <Text style={styles.headerGreetingName}>{user?.profile.name || 'Guest'}</Text>

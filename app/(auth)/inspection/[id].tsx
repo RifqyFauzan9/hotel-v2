@@ -40,7 +40,7 @@ export default function DetailPage() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <AppHeader label="Detail Inspeksi" />
+            <AppHeader label="Detail Inspeksi" prefixIcon="arrow-back" />
 
             {isLoading ? (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

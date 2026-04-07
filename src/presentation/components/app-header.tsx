@@ -5,20 +5,21 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type Props = {
     label: string;
+    prefixIcon?: keyof typeof Ionicons.glyphMap;
     suffixIcon?: keyof typeof Ionicons.glyphMap;
 }
-export default function AppHeader({ label, suffixIcon }: Props) {
+export default function AppHeader({ label, prefixIcon, suffixIcon }: Props) {
     const router = useRouter();
 
     return (
         <View style={styles.header}>
-            <Pressable style={styles.iconButtonContainer} onPress={() => router.back()}>
-                <Ionicons name="arrow-back" size={20} color={Colors.light.foreground} />
+            <Pressable style={[styles.iconButtonContainer, { backgroundColor: prefixIcon ? Colors.light.muted : undefined }]} onPress={() => router.back()}>
+                {prefixIcon && <Ionicons name={prefixIcon} size={20} color={Colors.light.foreground} />}
             </Pressable>
 
             <Text style={styles.headerLabel}>{label}</Text>
 
-            <Pressable style={styles.iconButtonContainer}>
+            <Pressable style={[styles.iconButtonContainer, { backgroundColor: suffixIcon ? Colors.light.muted : undefined }]}>
                 {suffixIcon && <Ionicons name={suffixIcon} size={18} color={Colors.light.foreground} />}
             </Pressable>
         </View>
@@ -29,7 +30,7 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: Colors.light.background,
+        backgroundColor: 'white',
         paddingHorizontal: 24,
         paddingVertical: 18,
         borderBottomColor: Colors.light.border,
@@ -47,6 +48,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 25,
-        backgroundColor: Colors.light.muted
     },
 });
