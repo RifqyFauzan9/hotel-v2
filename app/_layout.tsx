@@ -74,7 +74,6 @@ export default function RootLayout() {
   }
 
   return (
-    // <GluestackUIProvider config={config}>
     <SafeAreaProvider>
       <ToastProvider>
         <AuthProvider>
@@ -85,6 +84,5 @@ export default function RootLayout() {
         </AuthProvider>
       </ToastProvider>
     </SafeAreaProvider>
-    // </GluestackUIProvider>
   )
 }
