@@ -1,10 +1,9 @@
 import { di } from "@/src/core/di/container";
 import { Colors, Fonts } from "@/src/core/theme";
-import { LoginCredentialsInput } from "@/src/domain/schemas/auth.schema";
+import { LoginCredentials } from "@/src/domain/entities/auth.entity";
 import Button from "@/src/presentation/components/button";
 import FormInput from "@/src/presentation/components/form-input";
 import { useAuth } from "@/src/presentation/contexts/auth.context";
-import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from "expo-router";
 import { useState } from 'react';
 import { Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -18,7 +17,7 @@ export default function LoginPage() {
     const router = useRouter();
     const [error, setError] = useState<string>('');
 
-    async function handleSubmit(data: LoginCredentialsInput) {
+    async function handleSubmit(data: LoginCredentials) {
         setIsLoading(true);
 
         try {
@@ -72,12 +71,12 @@ export default function LoginPage() {
 
                         {/* <FormErrorBanner message={errors.root?.message} /> */}
 
-                        {error && <Text>{error}</Text>}
+                        {error && <Text style={styles.errorText}>{error}</Text>}
 
                         <Button disabled={isLoading} onPress={() => handleSubmit({ identifier, password })} label="Sign In" />
                     </View>
 
-                    <View style={styles.footer}>
+                    {/* <View style={styles.footer}>
                         <Text style={styles.footerHeaderText}>- Or sign in with -</Text>
 
                         <View style={styles.footerBody}>
@@ -91,7 +90,7 @@ export default function LoginPage() {
                                 <Ionicons name="logo-twitter" size={24} color='lightblue' />
                             </View>
                         </View>
-                    </View>
+                    </View> */}
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
@@ -104,7 +103,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        paddingHorizontal: 24,
+        paddingHorizontal: 26,
     },
     scroll: {
         flexGrow: 1,
@@ -115,7 +114,11 @@ const styles = StyleSheet.create({
         height: 100,
         objectFit: 'cover',
         marginHorizontal: 'auto',
-        marginBottom: 18,
+        marginBottom: 24,
+    },
+    errorText: {
+        fontFamily: Fonts?.sansM,
+        color: Colors.light.destructiveForeground,
     },
     form: {
         gap: 16,

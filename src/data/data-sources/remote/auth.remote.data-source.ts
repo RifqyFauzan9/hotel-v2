@@ -1,6 +1,6 @@
 import { IHttpClient } from "@/src/core/http/http-client";
 import { ZodError } from "zod";
-import { AuthResponseModel, AuthTokensModel, LoginCredentialsModel } from "../../models/auth-response.model";
+import { AuthResponseModel, AuthTokensModel, LoginCredentialsModel } from "../../models/auth.model";
 import { AuthResponseSchema } from "../../schemas/auth-model.schema";
 
 export interface IAuthRemoteDataSource {

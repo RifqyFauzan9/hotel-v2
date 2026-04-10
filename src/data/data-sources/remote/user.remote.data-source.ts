@@ -1,11 +1,11 @@
 import { IHttpClient } from "@/src/core/http/http-client";
 import { ZodError } from "zod";
-import { UserModel, UserResponseModel } from "../../models/user.model";
-import { UpdateCurrentUserModelInput, UserResponseSchema } from "../../schemas/user-model.schema";
+import { ProfileInputModel, UserModel, UserResponseModel } from "../../models/user.model";
+import { UserResponseSchema } from "../../schemas/user-model.schema";
 
 export interface IUserRemoteDataSource {
     getCurrentUser(): Promise<UserModel>;
-    updateCurrentUser(data: UpdateCurrentUserModelInput): Promise<UserModel>;
+    updateCurrentUser(data: ProfileInputModel): Promise<UserModel>;
 }
 
 export class UserRemoteDataSource implements IUserRemoteDataSource {
@@ -20,13 +20,14 @@ export class UserRemoteDataSource implements IUserRemoteDataSource {
             return validated.data;
         } catch (error: any) {
             if (error instanceof ZodError) {
+                console.error("Zod issues:", JSON.stringify(error.issues, null, 2));
                 throw new Error("Invalid response from server");
             }
             throw new Error(error.message || "Failed to fetch user");
         }
     }
 
-    async updateCurrentUser(data: UpdateCurrentUserModelInput): Promise<UserModel> {
+    async updateCurrentUser(data: ProfileInputModel): Promise<UserModel> {
         try {
             const formData = new FormData();
 

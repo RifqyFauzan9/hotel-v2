@@ -1,55 +1,38 @@
-import { di } from "@/src/core/di/container";
 import { Colors } from "@/src/core/theme";
-import { EditProfileInput } from "@/src/domain/schemas/user.schema";
 import AppHeader from "@/src/presentation/components/app-header";
 import Button from "@/src/presentation/components/button";
 import FormInput from "@/src/presentation/components/form-input";
+import { useEditProfile } from "@/src/presentation/hooks/use-edit-profile";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
-import { Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { useEffect } from "react";
+import { ActivityIndicator, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function EditProfilePage() {
-    const insets = useSafeAreaInsets();
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string>('');
+    const {
+        isLoading,
+        isFetching,
+        errors,
+        handleSubmit,
+        form,
+        handleChange,
+        pickImage,
+    } = useEditProfile();
 
-    async function handleSubmit(data: EditProfileInput) {
-        setIsLoading(true);
+    const sourceImage = form.picture
+        ? { uri: form.picture }
+        : require('@/assets/app/images/no-profile.jpeg');
 
-        try {
-            const response = await di.updateUserProfileUseCase.execute(data);
+    useEffect(() => {
+        console.log(errors);
+    }, [errors]);
 
-            console.log('✅ Update response:', {
-                username: response.username,
-                email: response.email,
-                department: response.departement,
-            });
-        } catch (apiError: any) {
-            console.error("❌ Update error:", apiError);
-            setError(apiError.message || "Update user profile failed, Please try again.");
-        } finally {
-            setIsLoading(false);
-        }
-    }
-
-    const [form, setForm] = useState<EditProfileInput>({
-        email: '',
-        name: '',
-        phone_number: 0,
-        gender: 'MALE',
-        birth_date: '2026-04-07T08:51:58.392Z',
-        address: '',
-        job_title: '',
-        join_date: '2026-04-07T08:51:58.393Z',
-        employment_status: 'PERMANENT',
-        emergency_contact: 0,
-        blood_type: 'A',
-        picture: '',
-    });
-
-    function handleChange(field: keyof EditProfileInput, value: string) {
-        setForm(prev => ({ ...prev, [field]: value }));
+    if (isFetching) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size='large' color={Colors.light.tint} />
+            </View>
+        );
     }
 
     return (
@@ -62,29 +45,85 @@ export default function EditProfilePage() {
                 <ScrollView contentContainerStyle={styles.scroll}>
                     <View style={styles.pictureWrapper}>
                         <View style={styles.imageWrapper}>
-                            <Image source={require('@/assets/app/images/person.jpeg')} style={styles.userImage} alt="User's profile picture" />
+                            <Image source={sourceImage} style={styles.userImage} alt="User's profile picture" />
                         </View>
-                        <View style={styles.iconWrapper}>
+                        <Pressable style={styles.iconWrapper} onPress={pickImage}>
                             <Ionicons name="camera-outline" size={16} color={Colors.light.tintForeground} />
-                        </View>
+                        </Pressable>
                     </View>
 
                     <View style={styles.inputContainer}>
-                        <FormInput label="Email" value={form.email} onChangeText={(value) => handleChange('email', value)} />
-                        <FormInput label="Nama Lengkap" value={form.name} onChangeText={(value) => handleChange('name', value)} />
-                        <FormInput label="Nomor Telepon" value={form.phone_number.toString()} onChangeText={(value) => handleChange('phone_number', value)} />
-                        <FormInput label="Gender" value={form.gender} onChangeText={(value) => handleChange('gender', value)} />
-                        <FormInput label="Tanggal Lahir" value={form.birth_date} onChangeText={(value) => handleChange('birth_date', value)} />
-                        <FormInput label="Alamat" value={form.address} onChangeText={(value) => handleChange('address', value)} />
-                        <FormInput label="Pekerjaan" value={form.job_title} onChangeText={(value) => handleChange('job_title', value)} />
-                        <FormInput label="Tanggal Bergabung" value={form.join_date} onChangeText={(value) => handleChange('join_date', value)} />
-                        <FormInput label="Status Karyawan" value={form.employment_status} onChangeText={(value) => handleChange('employment_status', value)} />
-                        <FormInput label="Kontak Darurat" value={form.emergency_contact.toString()} onChangeText={(value) => handleChange('emergency_contact', value)} />
-                        <FormInput label="Golongan Darah" value={form.blood_type} onChangeText={(value) => handleChange('blood_type', value)} />
+                        <FormInput
+                            label="Nama Lengkap"
+                            value={form.name}
+                            onChangeText={(value) => handleChange('name', value)}
+                            error={errors.name}
+                        />
+                        <FormInput
+                            label="Nomor Telepon"
+                            type="number"
+                            value={form.phoneNumber ? form.phoneNumber.toString() : ''}
+                            onChangeText={(value) => handleChange('phoneNumber', value)}
+                            error={errors.phoneNumber}
+                        />
+                        <FormInput
+                            label="Gender"
+                            type="dropdown"
+                            placeholder="Pilih Gender"
+                            value={form.gender}
+                            options={[{ label: 'Male', value: 'MALE' }, { label: 'Female', value: 'FEMALE' }]}
+                            onChangeText={(val) => handleChange('gender', val)}
+                            suffixIcon="male-female"
+                            error={errors.gender}
+                        />
+                        <FormInput
+                            label="Tanggal Lahir"
+                            value={form.birthDate.split('T')[0]}
+                            onChangeText={(value) => handleChange('birthDate', value)}
+                            type="datepicker"
+                            error={errors.birthDate}
+                        />
+                        <FormInput
+                            label="Alamat"
+                            value={form.address}
+                            onChangeText={(value) => handleChange('address', value)}
+                            error={errors.address}
+                        />
+                        <FormInput
+                            label="Pekerjaan"
+                            value={form.jobTitle}
+                            onChangeText={(value) => handleChange('jobTitle', value)}
+                            error={errors.jobTitle}
+                        />
+                        <FormInput
+                            label="Tanggal Bergabung"
+                            value={form.joinDate.split('T')[0]}
+                            onChangeText={(value) => handleChange('joinDate', value)}
+                            type="datepicker"
+                            error={errors.joinDate}
+                        />
+                        <FormInput
+                            label="Status Karyawan"
+                            type="dropdown"
+                            placeholder="Pilih Status Karyawan"
+                            value={form.employmentStatus}
+                            options={[{ label: 'Contract', value: 'CONTRACT' }, { label: 'Permanent', value: 'PERMANENT' }, { label: 'Intern', value: 'INTERN' }]}
+                            onChangeText={(val) => handleChange('employmentStatus', val)}
+                            suffixIcon="contract"
+                            error={errors.employmentStatus}
+                        />
+                        <FormInput
+                            label="Kontak Darurat"
+                            type="number"
+                            value={form.emergencyContact ? form.emergencyContact.toString() : ''}
+                            onChangeText={(value) => handleChange('emergencyContact', value)}
+                            error={errors.emergencyContact}
+                        />
                     </View>
                 </ScrollView>
-                <View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
-                    <Button label="Simpan Perubahan" onPress={() => handleSubmit(form)} />
+
+                <View style={styles.footer}>
+                    <Button label="Simpan Perubahan" onPress={() => handleSubmit(form)} disabled={isLoading} />
                 </View>
             </KeyboardAvoidingView>
         </SafeAreaView>
@@ -132,14 +171,12 @@ const styles = StyleSheet.create({
         right: 3,
         bottom: 8,
     },
-    inputContainer: {
-        gap: 10
-    },
+    inputContainer: { gap: 12 },
     footer: {
         minHeight: 85,
         backgroundColor: 'white',
         paddingHorizontal: 24,
-        paddingTop: 16,
+        paddingVertical: 16,
         borderTopColor: Colors.light.border,
         borderTopWidth: 1,
         borderRightColor: Colors.light.border,

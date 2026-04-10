@@ -1,7 +1,5 @@
+import { AuthTokens } from '@/src/domain/entities/auth.entity';
 import * as SecureStore from 'expo-secure-store';
-
-
-import { AuthTokens } from "@/src/domain/entities/auth.entity";
 
 const ACCESS_TOKEN_KEY = "auth_access_token";
 const REFRESH_TOKEN_KEY = "auth_refresh_token";

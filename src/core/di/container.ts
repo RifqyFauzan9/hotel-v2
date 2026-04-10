@@ -15,6 +15,7 @@ import { IUserRepository } from "@/src/domain/repositories/user.repository";
 import { LoginUseCase } from "@/src/domain/use-cases/auth/login.use-case";
 import { GetInspectionOrderByIdUseCase } from "@/src/domain/use-cases/inspection-orders/get-inspection-order-by-id.use-case";
 import { GetInspectionOrdersUseCase } from "@/src/domain/use-cases/inspection-orders/get-inspection-orders.use-case";
+import { GetCurrentUserProfileUseCase } from "@/src/domain/use-cases/user/get-current-user-profile.use-case";
 import { GetCurrentUserUseCase } from "@/src/domain/use-cases/user/get-current-user.use-case";
 import { UpdateUserProfileUseCase } from "@/src/domain/use-cases/user/update-user-profile.use-case";
 import { httpClient } from "../http/http-client";
@@ -45,6 +46,7 @@ class DIContainer {
     // Auth Use Cases
     private _loginUseCase?: LoginUseCase;
     private _getCurrentUserUseCase?: GetCurrentUserUseCase;
+    private _getCurrentUserProfileUseCase?: GetCurrentUserProfileUseCase;
 
     // Inspection Order Use Cases
     private _getInspectionOrdersUseCase?: GetInspectionOrdersUseCase;
@@ -136,6 +138,14 @@ class DIContainer {
         }
 
         return this._getCurrentUserUseCase;
+    }
+
+    get getCurrentUserProfileUseCase(): GetCurrentUserProfileUseCase {
+        if (!this._getCurrentUserProfileUseCase) {
+            this._getCurrentUserProfileUseCase = new GetCurrentUserProfileUseCase(this.userRepository);
+        }
+
+        return this._getCurrentUserProfileUseCase;
     }
 
     get updateUserProfileUseCase(): UpdateUserProfileUseCase {

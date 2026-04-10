@@ -1,5 +1,6 @@
 import { AuthResponse, AuthUser } from "@/src/domain/entities/auth.entity";
-import { AuthResponseModel, AuthUserModel } from "../models/auth-response.model";
+import { AuthResponseModel, AuthUserModel } from "../models/auth.model";
+
 
 export class AuthUserMapper {
     static toDomain(model: AuthUserModel): AuthUser {

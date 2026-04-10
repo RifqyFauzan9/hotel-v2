@@ -1,8 +1,6 @@
-import { config } from "@/glustack-ui.config";
 import { Colors } from "@/src/core/theme";
 import { AuthProvider, useAuth } from '@/src/presentation/contexts/auth.context';
 import { ToastProvider } from '@/src/presentation/contexts/toast.context';
-import { GluestackUIProvider } from '@gluestack-ui/themed';
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack, useRouter, useSegments } from "expo-router";
@@ -76,17 +74,17 @@ export default function RootLayout() {
   }
 
   return (
-    <GluestackUIProvider config={config}>
-      <SafeAreaProvider>
-        <ToastProvider>
-          <AuthProvider>
-            <ThemeProvider value={DefaultTheme}>
-              <RootLayoutNav />
-              <StatusBar style="dark" />
-            </ThemeProvider>
-          </AuthProvider>
-        </ToastProvider>
-      </SafeAreaProvider>
-    </GluestackUIProvider>
+    // <GluestackUIProvider config={config}>
+    <SafeAreaProvider>
+      <ToastProvider>
+        <AuthProvider>
+          <ThemeProvider value={DefaultTheme}>
+            <RootLayoutNav />
+            <StatusBar style="dark" />
+          </ThemeProvider>
+        </AuthProvider>
+      </ToastProvider>
+    </SafeAreaProvider>
+    // </GluestackUIProvider>
   )
 }

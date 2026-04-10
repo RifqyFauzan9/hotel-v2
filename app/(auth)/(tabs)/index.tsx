@@ -15,6 +15,7 @@ export default function Index() {
   const [inspectionOrders, setInspectionOrders] = useState<InspectionOrder[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
+  const sourceImage = user?.avatarUrl ? { uri: user?.avatarUrl } : require('@/assets/app/images/no-profile.jpeg');
 
   const [goodIssueItems] = useState([
     {
@@ -69,14 +70,14 @@ export default function Index() {
     <SafeAreaView style={styles.wrapper} edges={['top', 'left', 'right']}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Image source={require('@/assets/app/images/person.jpeg')} style={styles.headerImage} alt="User's image" />
+          <Image source={sourceImage} style={styles.headerImage} alt="User's image" />
           <View style={styles.headerGreeting}>
             <Text style={styles.headerGreetingLabel}>Selamat Pagi,</Text>
-            <Text style={styles.headerGreetingName}>{user?.profile.name || 'Guest'}</Text>
+            <Text style={styles.headerGreetingName}>{user?.profile?.name || 'Guest'}</Text>
           </View>
         </View>
         <View style={styles.headerNotifButton}>
-          <Pressable>
+          <Pressable onPress={() => router.push('/login')}>
             <Ionicons name="log-out-outline" size={24} color='black' />
           </Pressable>
         </View>

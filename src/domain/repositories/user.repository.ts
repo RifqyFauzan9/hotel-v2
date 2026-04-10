@@ -1,5 +1,5 @@
-import { User } from "../entities/user.entity";
-import { EditProfileInput } from "../schemas/user.schema";
+import { ProfileInput, User } from "../entities/user.entity";
+
 
 
 export interface IUserRepository {
@@ -11,5 +11,10 @@ export interface IUserRepository {
     /**
      * Update the currently authenticated user profile
      */
-    updateUserProfile(data: EditProfileInput): Promise<User>;
+    updateUserProfile(data: ProfileInput): Promise<User>;
+
+    /**
+     * Get profile data of the currently authenticated user
+     */
+    getCurrentUserProfile(): Promise<ProfileInput>;
 }

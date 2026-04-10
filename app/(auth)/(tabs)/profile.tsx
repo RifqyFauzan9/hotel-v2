@@ -16,6 +16,9 @@ type ActionButton = {
 export default function ProfilePage() {
     const { user } = useAuth();
     const router = useRouter();
+    const [showImagePreview, setShowImagePreview] = useState<boolean>(false);
+
+    const sourceImage = user?.avatarUrl ? { uri: user?.avatarUrl } : require('@/assets/app/images/no-profile.jpeg');
 
     const [options] = useState<ActionButton[]>([
         { icon: 'settings-outline', label: 'Edit Profil', onPress: () => router.push('/(auth)/profile/edit') },
@@ -29,10 +32,10 @@ export default function ProfilePage() {
 
             <ScrollView contentContainerStyle={styles.content}>
                 <View style={styles.profileSection}>
-                    <View style={styles.imageWrapper}>
-                        <Image source={require('@/assets/app/images/person.jpeg')} style={styles.userImage} alt="User's profile picture" />
-                    </View>
-                    <Text style={styles.userName}>{user?.profile.name || 'Guest'}</Text>
+                    <Pressable style={styles.imageWrapper} onPress={() => setShowImagePreview(true)}>
+                        <Image source={sourceImage} style={styles.userImage} alt="User's profile picture" />
+                    </Pressable>
+                    <Text style={styles.userName}>{user?.profile?.name || 'Guest'}</Text>
                     <Text style={styles.userRole}>{user?.departement || 'Inspektor'}</Text>
                     <Text style={styles.userId}>ID: {user?.id.split('-')[0] || 'none'}</Text>
                 </View>
@@ -101,7 +104,7 @@ const styles = StyleSheet.create({
     userImage: {
         width: 90,
         height: 90,
-        borderRadius: 50
+        borderRadius: 45
     },
     userName: {
         fontSize: 18,

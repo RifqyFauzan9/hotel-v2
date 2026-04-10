@@ -1,3 +1,4 @@
+import { di } from "@/src/core/di/container";
 import { AUTH_EVENTS, authEvents } from "@/src/core/events/auth-event";
 import { httpClient } from "@/src/core/http/http-client";
 import { tokenStorage } from "@/src/core/storage/token-storage";
@@ -21,6 +22,7 @@ interface AuthContextType {
     login: (user: User, accessToken: string) => void;
     logout: () => Promise<void>;
     checkAuth: () => Promise<void>;
+    refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -176,6 +178,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const refreshUser = async (): Promise<void> => {
+        const user = await di.getCurrentUserUseCase.execute();
+        setUser(user);
+        userStorage
+            .saveUser(user)
+            .then(() => {
+                console.log("✅ Edit profile: User data saved successfully");
+            })
+            .catch((error) => {
+                console.error("❌ Edit profile: Error saving user data:", error);
+            });
+    }
+
     return (
         <AuthContext.Provider
             value={{
@@ -185,6 +200,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 login,
                 logout,
                 checkAuth,
+                refreshUser,
             }}
         >
             {children}

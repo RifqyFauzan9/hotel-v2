@@ -8,25 +8,20 @@ export const LoginCredentialsSchema = z.object({
     "password": z.string(),
 });
 
-export const UserSchema = z.object({
+export const AuthUserSchema = z.object({
     "id": z.string(),
     "email": z.string(),
     "username": z.string(),
 });
 
-export const DataSchema = z.object({
-    "user": UserSchema,
+export const AuthDataSchema = z.object({
     "token": z.string(),
     "refresh_token": z.string(),
+    "user": AuthUserSchema,
 });
 
 export const AuthResponseSchema = z.object({
     "success": z.boolean(),
-    "data": DataSchema,
+    "data": AuthDataSchema,
     "message": z.string(),
 });
-
-/**
- * Type inference from schemas
- */
-export type LoginCredentialsInput = z.infer<typeof LoginCredentialsSchema>;
