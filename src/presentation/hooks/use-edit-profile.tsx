@@ -15,7 +15,7 @@ export function useEditProfile() {
     const router = useRouter();
     const { refreshUser } = useAuth();
     const [initialForm, setInitialForm] = useState<ProfileInput | null>(null);
-    const [image, setImage] = useState<string | null>(null)
+    const [image, setImage] = useState<string | null>(null);
 
     const [form, setForm] = useState<ProfileInput>({
         // email: '',
@@ -31,6 +31,8 @@ export function useEditProfile() {
         emergencyContact: 0,
         bloodType: 'A',
     });
+
+    const hasChanges = initialForm !== null && JSON.stringify(form) !== JSON.stringify(initialForm);
 
     const pickImage = async () => {
         const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -59,16 +61,20 @@ export function useEditProfile() {
         setErrors({});
 
         try {
-            ProfileSchema.parse(data);
+            const validated = ProfileSchema.safeParse(data);
 
-            const updatedUser = await di.updateUserProfileUseCase.execute(data);
+            if (validated.success) {
+                const updatedUser = await di.updateUserProfileUseCase.execute(validated.data);
 
-            const updatedPicture = updatedUser.avatarUrl ?? data.picture;
-            setForm(prev => ({ ...prev, picture: updatedPicture }));
-            setInitialForm(prev => prev ? { ...prev, picture: updatedPicture } : prev);
+                const updatedPicture = updatedUser.avatarUrl ?? data.picture;
+                setForm(prev => ({ ...prev, picture: updatedPicture }));
+                setInitialForm(prev => prev ? { ...prev, picture: updatedPicture } : prev);
 
-            refreshUser();
-            router.replace('/profile')
+                refreshUser();
+                router.back()
+            } else {
+                throw new Error('Gagal safe parse data input profile.');
+            }
         } catch (err: any) {
             if (err instanceof ZodError) {
                 const fieldErrors: Partial<Record<keyof ProfileInput, string>> = {};
@@ -108,7 +114,7 @@ export function useEditProfile() {
         }
     }
 
-    function handleChange(field: keyof ProfileInput, value: string) {
+    function handleInputChange(field: keyof ProfileInput, value: string) {
         setForm(prev => ({
             ...prev,
             [field]:
@@ -135,7 +141,8 @@ export function useEditProfile() {
         errors,
         handleSubmit,
         form,
-        handleChange,
-        pickImage
+        handleInputChange,
+        pickImage,
+        hasChanges,
     }
 }

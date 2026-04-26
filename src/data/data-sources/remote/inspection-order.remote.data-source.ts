@@ -4,10 +4,12 @@ import { InspectionOrderFilters } from "@/src/domain/entities/common";
 import { ZodError } from "zod";
 import { InspectionOrderModel } from "../../models/inspection-order.model";
 import { InspectionOrderDetailResponseSchema, InspectionOrderListResponseSchema } from "../../schemas/inspection-order-model.schema";
+import { ProgramDetailModel, ProgramDetailResponseSchema } from "../../schemas/program-detail-model.schema";
 
 export interface IInspectionOrderRemoteDataSource {
     getInspectionOrders(filters?: InspectionOrderFilters): Promise<ApiResponse<PaginatedResponse<InspectionOrderModel>>>;
     getInspectionOrderById(id: string): Promise<InspectionOrderModel | null>;
+    getProgramDetail(id: string): Promise<ProgramDetailModel | null>;
 }
 
 export class InspectionOrderRemoteDataSource implements IInspectionOrderRemoteDataSource {
@@ -60,6 +62,23 @@ export class InspectionOrderRemoteDataSource implements IInspectionOrderRemoteDa
                 throw new Error("Invalid response from server");
             }
             throw new Error(error.message || "Failed to fetch inspection order");
+        }
+    }
+
+    async getProgramDetail(id: string): Promise<ProgramDetailModel | null> {
+        try {
+            const response = await this.httpClient.get<ApiResponse<ProgramDetailModel>>(`/inspection-programs/${id}`);
+
+            // Validate API response
+            const validated = ProgramDetailResponseSchema.parse(response);
+            return validated.data;
+        } catch (error: any) {
+            if (error.status === 404) return null;
+            if (error instanceof ZodError) {
+                console.error("❌ Program Detail Validation Error:", error.issues);
+                throw new Error("Invalid response from server");
+            }
+            throw new Error(error.message || "Failed to fetch program detail");
         }
     }
 }

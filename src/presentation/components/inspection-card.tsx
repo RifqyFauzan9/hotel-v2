@@ -56,9 +56,8 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
     },
     cardFooter: {
-        flexDirection: 'row',
-        flex: 1,
         gap: 8,
+        flexDirection: 'row',
     },
     cardBodyLeft: {
         flexDirection: 'row',

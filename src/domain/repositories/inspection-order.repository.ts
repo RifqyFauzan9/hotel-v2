@@ -1,5 +1,6 @@
 import { InspectionOrderFilters, PaginatedResult } from "../entities/common";
 import { InspectionOrder } from "../entities/inspection-order.entity";
+import { ProgramDetail } from "../entities/program-detail.entity";
 
 /**
  * Inspection Order Repository Interface
@@ -15,4 +16,6 @@ export interface IInspectionOrderRepository {
      * Get a single inspection order by ID
      */
     getInspectionOrderById(id: string): Promise<InspectionOrder | null>;
+
+    getDetailProgram(id: string): Promise<ProgramDetail | null>;
 }

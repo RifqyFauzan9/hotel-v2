@@ -5,28 +5,14 @@ import FormInput from "@/src/presentation/components/form-input";
 import { useEditProfile } from "@/src/presentation/hooks/use-edit-profile";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
-import { ActivityIndicator, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Image, Pressable, StyleSheet, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function EditProfilePage() {
-    const {
-        isLoading,
-        isFetching,
-        errors,
-        handleSubmit,
-        form,
-        handleChange,
-        pickImage,
-    } = useEditProfile();
-
-    const sourceImage = form.picture
-        ? { uri: form.picture }
-        : require('@/assets/app/images/no-profile.jpeg');
-
-    useEffect(() => {
-        console.log(errors);
-    }, [errors]);
-
+    const { isLoading, isFetching, errors, handleSubmit, form, handleInputChange, pickImage, hasChanges } = useEditProfile();
+    const sourceImage = form.picture ? { uri: form.picture } : require('@/assets/app/images/no-profile.jpeg');
+    useEffect(() => { console.log(errors); }, [errors]);
     if (isFetching) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -34,98 +20,37 @@ export default function EditProfilePage() {
             </View>
         );
     }
-
     return (
         <SafeAreaView style={styles.wrapper}>
             <AppHeader prefixIcon="arrow-back-outline" label="Edit Profile" />
-            <KeyboardAvoidingView
-                style={styles.keyboard}
-                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            <KeyboardAwareScrollView
+                bottomOffset={20}
+                contentContainerStyle={styles.container}
+                showsVerticalScrollIndicator={false}
             >
-                <ScrollView contentContainerStyle={styles.scroll}>
-                    <View style={styles.pictureWrapper}>
-                        <View style={styles.imageWrapper}>
-                            <Image source={sourceImage} style={styles.userImage} alt="User's profile picture" />
-                        </View>
-                        <Pressable style={styles.iconWrapper} onPress={pickImage}>
-                            <Ionicons name="camera-outline" size={16} color={Colors.light.tintForeground} />
-                        </Pressable>
+                <View style={styles.pictureWrapper}>
+                    <View style={styles.imageWrapper}>
+                        <Image source={sourceImage} style={styles.userImage} alt="User's profile picture" />
                     </View>
-
-                    <View style={styles.inputContainer}>
-                        <FormInput
-                            label="Nama Lengkap"
-                            value={form.name}
-                            onChangeText={(value) => handleChange('name', value)}
-                            error={errors.name}
-                        />
-                        <FormInput
-                            label="Nomor Telepon"
-                            type="number"
-                            value={form.phoneNumber ? form.phoneNumber.toString() : ''}
-                            onChangeText={(value) => handleChange('phoneNumber', value)}
-                            error={errors.phoneNumber}
-                        />
-                        <FormInput
-                            label="Gender"
-                            type="dropdown"
-                            placeholder="Pilih Gender"
-                            value={form.gender}
-                            options={[{ label: 'Male', value: 'MALE' }, { label: 'Female', value: 'FEMALE' }]}
-                            onChangeText={(val) => handleChange('gender', val)}
-                            suffixIcon="male-female"
-                            error={errors.gender}
-                        />
-                        <FormInput
-                            label="Tanggal Lahir"
-                            value={form.birthDate.split('T')[0]}
-                            onChangeText={(value) => handleChange('birthDate', value)}
-                            type="datepicker"
-                            error={errors.birthDate}
-                        />
-                        <FormInput
-                            label="Alamat"
-                            value={form.address}
-                            onChangeText={(value) => handleChange('address', value)}
-                            error={errors.address}
-                        />
-                        <FormInput
-                            label="Pekerjaan"
-                            value={form.jobTitle}
-                            onChangeText={(value) => handleChange('jobTitle', value)}
-                            error={errors.jobTitle}
-                        />
-                        <FormInput
-                            label="Tanggal Bergabung"
-                            value={form.joinDate.split('T')[0]}
-                            onChangeText={(value) => handleChange('joinDate', value)}
-                            type="datepicker"
-                            error={errors.joinDate}
-                        />
-                        <FormInput
-                            label="Status Karyawan"
-                            type="dropdown"
-                            placeholder="Pilih Status Karyawan"
-                            value={form.employmentStatus}
-                            options={[{ label: 'Contract', value: 'CONTRACT' }, { label: 'Permanent', value: 'PERMANENT' }, { label: 'Intern', value: 'INTERN' }]}
-                            onChangeText={(val) => handleChange('employmentStatus', val)}
-                            suffixIcon="contract"
-                            error={errors.employmentStatus}
-                        />
-                        <FormInput
-                            label="Kontak Darurat"
-                            type="number"
-                            value={form.emergencyContact ? form.emergencyContact.toString() : ''}
-                            onChangeText={(value) => handleChange('emergencyContact', value)}
-                            error={errors.emergencyContact}
-                        />
-                    </View>
-                </ScrollView>
-
-                <View style={styles.footer}>
-                    <Button label="Simpan Perubahan" onPress={() => handleSubmit(form)} disabled={isLoading} />
+                    <Pressable style={styles.iconWrapper} onPress={pickImage}>
+                        <Ionicons name="camera-outline" size={16} color={Colors.light.tintForeground} />
+                    </Pressable>
                 </View>
-            </KeyboardAvoidingView>
+                <View style={styles.form}>
+                    <FormInput label="Nama Lengkap" value={form.name} onChangeText={(value) => handleInputChange('name', value)} error={errors.name} />
+                    <FormInput label="Nomor Telepon" type="number" value={form.phoneNumber ? form.phoneNumber.toString() : ''} onChangeText={(value) => handleInputChange('phoneNumber', value)} error={errors.phoneNumber} />
+                    <FormInput label="Gender" type="dropdown" placeholder="Pilih Gender" value={form.gender} options={[{ label: 'Male', value: 'MALE' }, { label: 'Female', value: 'FEMALE' }]} onChangeText={(val) => handleInputChange('gender', val)} suffixIcon="male-female" error={errors.gender} />
+                    <FormInput label="Tanggal Lahir" value={form.birthDate.split('T')[0]} onChangeText={(value) => handleInputChange('birthDate', value)} type="datepicker" error={errors.birthDate} />
+                    <FormInput label="Alamat" value={form.address} onChangeText={(value) => handleInputChange('address', value)} error={errors.address} />
+                    <FormInput label="Pekerjaan" value={form.jobTitle} onChangeText={(value) => handleInputChange('jobTitle', value)} error={errors.jobTitle} />
+                    <FormInput label="Tanggal Bergabung" value={form.joinDate.split('T')[0]} onChangeText={(value) => handleInputChange('joinDate', value)} type="datepicker" error={errors.joinDate} />
+                    <FormInput label="Status Karyawan" type="dropdown" placeholder="Pilih Status Karyawan" value={form.employmentStatus} options={[{ label: 'Contract', value: 'CONTRACT' }, { label: 'Permanent', value: 'PERMANENT' }, { label: 'Intern', value: 'INTERN' }]} onChangeText={(val) => handleInputChange('employmentStatus', val)} suffixIcon="contract" error={errors.employmentStatus} />
+                    <FormInput label="Kontak Darurat" type="number" value={form.emergencyContact ? form.emergencyContact.toString() : ''} onChangeText={(value) => handleInputChange('emergencyContact', value)} error={errors.emergencyContact} />
+                    <View style={{ marginTop: 6 }}>
+                        <Button label="Simpan Perubahan" onPress={() => handleSubmit(form)} disabled={isLoading || !hasChanges} />
+                    </View>
+                </View>
+            </KeyboardAwareScrollView>
         </SafeAreaView>
     );
 }
@@ -134,14 +59,10 @@ const styles = StyleSheet.create({
     wrapper: {
         flex: 1,
     },
-    keyboard: {
-        flex: 1,
-    },
-    scroll: {
-        flexGrow: 1,
-        paddingHorizontal: 18,
-        paddingVertical: 40,
+    container: {
+        padding: 24,
         backgroundColor: Colors.light.background,
+        flexGrow: 1,
     },
     pictureWrapper: {
         position: 'relative',
@@ -158,7 +79,7 @@ const styles = StyleSheet.create({
     userImage: {
         width: 90,
         height: 90,
-        borderRadius: 50
+        borderRadius: 50,
     },
     iconWrapper: {
         padding: 5,
@@ -171,19 +92,7 @@ const styles = StyleSheet.create({
         right: 3,
         bottom: 8,
     },
-    inputContainer: { gap: 12 },
-    footer: {
-        minHeight: 85,
-        backgroundColor: 'white',
-        paddingHorizontal: 24,
-        paddingVertical: 16,
-        borderTopColor: Colors.light.border,
-        borderTopWidth: 1,
-        borderRightColor: Colors.light.border,
-        borderRightWidth: 1,
-        borderLeftColor: Colors.light.border,
-        borderLeftWidth: 1,
-        borderTopEndRadius: 12,
-        borderTopStartRadius: 12,
-    }
+    form: {
+        gap: 10
+    },
 });

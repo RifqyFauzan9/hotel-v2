@@ -8,7 +8,7 @@ export const config = {
         timeout: 10000,
     },
     storage: {
-        prefix: "@moment_fault_report",
+        prefix: "@ihms_maintenance_mobile",
     },
     features: {
         imageUpload: true,

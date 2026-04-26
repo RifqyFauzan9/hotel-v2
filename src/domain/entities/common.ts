@@ -6,7 +6,7 @@ export interface InspectionOrderFilters {
     limit?: number;
     search?: string;
     assetId?: string;
-    status?: 'OPEN' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELED' | 'PENDING' | 'VERIFIED' | 'REJECTED';
+    status?: 'OPEN' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'PENDING' | 'VERIFIED' | 'REJECTED';
     priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
     startDate?: string;
     endDate?: string;

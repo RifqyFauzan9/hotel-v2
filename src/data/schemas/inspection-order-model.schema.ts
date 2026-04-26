@@ -109,11 +109,13 @@ export const OrderComponentSchema = z.object({
 
 // ─── Base Model (shared fields) ───────────────────────────
 export const InspectionStatusSchema = z.enum(['OPEN', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'PENDING', 'VERIFIED', 'REJECTED']);
+export const InspectionPriority = z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']);
+
 export const InspectionOrderBaseSchema = z.object({
     id: z.string(),
     number: z.string(),
     status: InspectionStatusSchema,
-    priority: z.string(),
+    priority: InspectionPriority,
     asset_id: z.string(),
     asset_name: z.string(),
     asset_category: z.string(),

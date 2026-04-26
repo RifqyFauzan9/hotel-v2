@@ -91,10 +91,10 @@ export default function Index() {
           ) : inspectionOrders.slice(0, 2).map(i => (
             <InspectionCard
               key={i.id}
-              roomName={i.asset_name}
+              roomName={i.assetName}
               roomStatus={i.status}
-              roomType={i.asset_type}
-              onDetailPress={() => router.push(`../inspection/${i.id}`)}
+              roomType={i.assetType}
+              onDetailPress={() => router.push(`../inspections/${i.id}`)}
             />
           ))}
         </View>

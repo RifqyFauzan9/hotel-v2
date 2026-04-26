@@ -16,7 +16,7 @@ type Props = {
     value?: string;
     onChangeText: (value: string) => void;
     isPasswordField?: boolean;
-    type?: 'dropdown' | 'text' | 'datepicker' | 'number';
+    type?: 'dropdown' | 'text' | 'datepicker' | 'number' | 'textarea';
     suffixIcon?: keyof typeof Ionicons.glyphMap;
     options?: Option[];
     error?: string;
@@ -59,6 +59,39 @@ export default function FormInput({
 
     const showDatePicker = () => {
         showMode('date');
+    }
+
+    if (type === 'textarea') {
+        return (
+            <View style={styles.wrapper}>
+                {label && <Text style={styles.inputLabel}>{label}</Text>}
+                <View style={[styles.inputContainer, { borderColor: focused ? Colors.light.tint : Colors.light.border }]}>
+                    <TextInput
+                        value={value}
+                        placeholder={placeholder}
+                        onChangeText={onChangeText}
+                        style={[styles.input, { minHeight: 80, textAlignVertical: 'top' }]}
+                        onFocus={() => setFocused(true)}
+                        onBlur={() => setFocused(false)}
+                        secureTextEntry={isPasswordField && !isPasswordFieldVisible}
+                        multiline
+                    />
+
+                    {/* Handling untuk icon mata pada password atau suffixIcon biasa */}
+                    {isPasswordField ? (
+                        <Pressable onPress={() => setIsPasswordFieldVisible(prev => !prev)}>
+                            <Ionicons name={isPasswordFieldVisible ? 'eye-off' : 'eye'} size={18} color={Colors.light.mutedForeground} />
+                        </Pressable>
+                    ) : suffixIcon ? (
+                        <Ionicons name={suffixIcon} size={18} color={Colors.light.mutedForeground} />
+                    ) : null}
+                </View>
+
+                {error && (
+                    <Text style={styles.errorMessage}>{error}</Text>
+                )}
+            </View>
+        )
     }
 
     // --- RENDER UNTUK DATEPICKER ---

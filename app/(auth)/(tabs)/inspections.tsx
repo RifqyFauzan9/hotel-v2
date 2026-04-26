@@ -1,67 +1,62 @@
-import { Colors, Fonts } from "@/src/core/theme";
-import { capitalizeFirstLetter } from "@/src/core/utils/inspection.utils";
+import { Colors } from "@/src/core/theme";
+import { InspectionOrder } from "@/src/domain/entities/inspection-order.entity";
 import AppHeader from "@/src/presentation/components/app-header";
-import { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import InspectionCard from "@/src/presentation/components/inspection-card";
+import Tabbar from "@/src/presentation/components/tab-bar";
+import { useInspections } from "@/src/presentation/hooks/use-inspections";
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+export type ActiveTabStatus = 'semua' | 'menunggu' | 'selesai';
+
 export default function InspectionPage() {
-    const [activeTab, setActiveTab] = useState<string>('semua');
+    const {
+        activeTab,
+        setActiveTab,
+        isLoading,
+        error,
+        inspections,
+        toDetail
+    } = useInspections();
+
+    const renderItem = ({ item }: { item: InspectionOrder }) => (
+        <InspectionCard
+            roomName={item.assetName}
+            roomStatus={item.status}
+            roomType={item.assetType}
+            onDetailPress={() => toDetail(item.id)}
+        />
+    );
 
     return (
-        <SafeAreaView style={styles.wrapper}>
-            <AppHeader label="Daftar Inspeksi" suffixIcon="filter" />
+        <SafeAreaView style={styles.wrapper} edges={['top', 'right', 'left']}>
+            <AppHeader label="Daftar Inspeksi" prefixIcon="filter" suffixIcon="search" />
             <Tabbar activeTab={activeTab} setActiveTab={setActiveTab} />
+
+            {isLoading
+                ? (<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <ActivityIndicator size='large' color={Colors.light.tint} />
+                </View>)
+                : error ? (<Text>Terjadi Error: {error}</Text>)
+                    : (<FlatList
+                        data={inspections}
+                        renderItem={renderItem}
+                        keyExtractor={item => item.id}
+                        contentContainerStyle={{
+                            gap: 14,
+                            padding: 18,
+                            flexGrow: 1,
+                        }}
+                        style={{ flex: 1, backgroundColor: Colors.light.background }}
+                        ListEmptyComponent={<Text>Tidak ada data</Text>}
+                    />)
+            }
         </SafeAreaView>
     );
-}
-
-function Tabbar({ activeTab, setActiveTab }: { activeTab: string; setActiveTab: (value: string) => void; }) {
-    return (
-        <View style={styles.tabbar}>
-            <TabbarItem label="semua" activeTab={activeTab} setActiveTab={setActiveTab} />
-            <TabbarItem label="siap" activeTab={activeTab} setActiveTab={setActiveTab} />
-            <TabbarItem label="berjalan" activeTab={activeTab} setActiveTab={setActiveTab} />
-            <TabbarItem label="selesai" activeTab={activeTab} setActiveTab={setActiveTab} />
-        </View>
-    )
-}
-
-function TabbarItem({ label, activeTab, setActiveTab }: { label: string, activeTab: string; setActiveTab: (value: string) => void; }) {
-    return (
-        <Pressable
-            style={[styles.tabbarItem,
-            { backgroundColor: activeTab === label ? Colors.light.tint : Colors.light.muted }
-            ]}
-            onPress={() => setActiveTab(label)}
-        >
-            <Text style={[styles.tabbarItemText, { color: activeTab === label ? Colors.light.tintForeground : Colors.light.mutedForeground }]}>{capitalizeFirstLetter(label)}</Text>
-        </Pressable>
-    )
 }
 
 const styles = StyleSheet.create({
     wrapper: {
         flex: 1
     },
-    tabbar: {
-        paddingVertical: 18,
-        paddingHorizontal: 24,
-        gap: 10,
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: 'white',
-        borderBottomWidth: 1,
-        borderBottomColor: Colors.light.border,
-    },
-    tabbarItem: {
-        flex: 1,
-        paddingVertical: 10,
-        borderRadius: 12,
-    },
-    tabbarItemText: {
-        fontFamily: Fonts?.sansSB,
-        fontSize: 14,
-        textAlign: 'center'
-    }
 });

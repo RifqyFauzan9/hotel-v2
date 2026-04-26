@@ -15,6 +15,7 @@ import { IUserRepository } from "@/src/domain/repositories/user.repository";
 import { LoginUseCase } from "@/src/domain/use-cases/auth/login.use-case";
 import { GetInspectionOrderByIdUseCase } from "@/src/domain/use-cases/inspection-orders/get-inspection-order-by-id.use-case";
 import { GetInspectionOrdersUseCase } from "@/src/domain/use-cases/inspection-orders/get-inspection-orders.use-case";
+import { GetProgramDetailUseCase } from "@/src/domain/use-cases/inspection-orders/get-program-detail.use-case";
 import { GetCurrentUserProfileUseCase } from "@/src/domain/use-cases/user/get-current-user-profile.use-case";
 import { GetCurrentUserUseCase } from "@/src/domain/use-cases/user/get-current-user.use-case";
 import { UpdateUserProfileUseCase } from "@/src/domain/use-cases/user/update-user-profile.use-case";
@@ -51,6 +52,7 @@ class DIContainer {
     // Inspection Order Use Cases
     private _getInspectionOrdersUseCase?: GetInspectionOrdersUseCase;
     private _getInspectionOrderByIdUseCase?: GetInspectionOrderByIdUseCase;
+    private _getInspectionProgramByIdUseCase?: GetProgramDetailUseCase;
 
     // User Use Cases
     private _updateUserProfileUseCase?: UpdateUserProfileUseCase;
@@ -129,6 +131,13 @@ class DIContainer {
             this._getInspectionOrderByIdUseCase = new GetInspectionOrderByIdUseCase(this.inspectionOrderRepository);
         }
         return this._getInspectionOrderByIdUseCase;
+    }
+
+    get getInspectionProgramByIdUseCase(): GetProgramDetailUseCase {
+        if (!this._getInspectionProgramByIdUseCase) {
+            return this._getInspectionProgramByIdUseCase = new GetProgramDetailUseCase(this.inspectionOrderRepository);
+        }
+        return this._getInspectionProgramByIdUseCase;
     }
 
     // Use Cases - User

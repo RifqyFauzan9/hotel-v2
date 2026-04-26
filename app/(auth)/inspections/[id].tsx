@@ -2,11 +2,12 @@ import { di } from "@/src/core/di/container";
 import { Colors, Fonts } from "@/src/core/theme";
 import { InspectionOrder } from "@/src/domain/entities/inspection-order.entity";
 import AppHeader from "@/src/presentation/components/app-header";
+import Button from "@/src/presentation/components/button";
 import { Ionicons } from "@expo/vector-icons";
 import { Checkbox } from 'expo-checkbox';
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function DetailPage() {
@@ -14,8 +15,6 @@ export default function DetailPage() {
     const [detail, setDetail] = useState<InspectionOrder | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [checkbox, setCheckbox] = useState<boolean>(false);
-
-    console.log(detail?.order_items[0].details.name)
 
     useEffect(() => {
         const loadDetailInspection = async () => {
@@ -56,6 +55,10 @@ export default function DetailPage() {
                     <TaskSection detail={detail} checkbox={checkbox} setCheckbox={setCheckbox} />
                 </View>
             )}
+
+            <View style={styles.footer}>
+                <Button label="Mulai Inspeksi" />
+            </View>
         </SafeAreaView>
     )
 }
@@ -68,8 +71,8 @@ function DetailCard({ detail }: { detail: InspectionOrder }) {
                     <Ionicons name="bed-outline" size={24} color={Colors.light.tint} />
                 </View>
                 <View style={styles.cardHeaderLabel}>
-                    <Text style={styles.cardHeaderTitle}>{detail.asset_name}</Text>
-                    <Text style={styles.cardHeaderType}>{detail.asset_type}</Text>
+                    <Text style={styles.cardHeaderTitle}>{detail.assetName}</Text>
+                    <Text style={styles.cardHeaderType}>{detail.assetType}</Text>
                 </View>
             </View>
             <View style={styles.badgeContainer}>
@@ -83,11 +86,11 @@ function DetailCard({ detail }: { detail: InspectionOrder }) {
             <View style={styles.infoContainer}>
                 <View style={styles.infoRow}>
                     <Ionicons name="calendar-outline" size={14} color={Colors.light.mutedForeground} />
-                    <Text style={styles.infoText}>{detail.planned_date.toISOString().split('T')[0]}, {detail.planned_date.toISOString().split('T')[1].split('.')[0]}</Text>
+                    <Text style={styles.infoText}>{detail.plannedDate.toISOString().split('T')[0]}, {detail.plannedDate.toISOString().split('T')[1].split('.')[0]}</Text>
                 </View>
                 <View style={styles.infoRow}>
                     <Ionicons name="time-outline" size={14} color={Colors.light.mutedForeground} />
-                    <Text style={styles.infoText}>Estimasi: {detail.estimated_man_hours}jam</Text>
+                    <Text style={styles.infoText}>Estimasi: {detail.estimatedManHours}jam</Text>
                 </View>
             </View>
             <View style={styles.noteCard}>
@@ -108,38 +111,49 @@ type TaskSectionProps = {
 };
 
 function TaskSection({ detail, checkbox, setCheckbox }: TaskSectionProps) {
+    const router = useRouter();
     return (
         <View style={styles.taskSection}>
-            <Text style={styles.taskSectionTitle}>Daftar Tugas ({detail.order_items.length})</Text>
+            <Text style={styles.taskSectionTitle}>Daftar Program ({detail.orderItems.length})</Text>
             <View style={styles.taskList}>
-                {detail.order_items.map((item, index) => {
+                {detail.orderItems.map((item, index) => {
                     const isFirst = index === 0;
-                    const isLast = index === detail.order_items.length - 1;
+                    const isLast = index === detail.orderItems.length - 1;
 
                     return (
-                        <View style={[
-                            styles.taskItem,
-                            isFirst && {
-                                borderTopStartRadius: 12,
-                                borderTopEndRadius: 12,
-                            },
-                            isLast && {
-                                borderBottomStartRadius: 12,
-                                borderBottomEndRadius: 12,
-                            },
-                            !isLast && { borderBottomWidth: 0 }
-                        ]} key={item.id}>
+                        <Pressable
+                            style={[
+                                styles.taskItem,
+                                isFirst && {
+                                    borderTopStartRadius: 12,
+                                    borderTopEndRadius: 12,
+                                },
+                                isLast && {
+                                    borderBottomStartRadius: 12,
+                                    borderBottomEndRadius: 12,
+                                },
+                                !isLast && { borderBottomWidth: 0 }
+                            ]}
+                            key={item.id}
+                            onPress={() =>
+                                router.push({
+                                    pathname: "/inspections/tasks/itemDetail",
+                                    params: {
+                                        item: JSON.stringify(item),
+                                    },
+                                })
+                            }
+                        >
                             <Checkbox
                                 style={styles.checkbox}
                                 value={checkbox}
-                                onValueChange={setCheckbox}
-                                color={true ? Colors.light.tint : undefined}
+                                color={checkbox ? Colors.light.tint : undefined}
                             />
                             <View style={styles.taskItemContent}>
-                                <Text style={styles.taskItemTitle} numberOfLines={1} ellipsizeMode="tail">{item.details.name}</Text>
-                                <Text style={styles.taskItemSubtitle} numberOfLines={2} ellipsizeMode="tail">{item.details.description}</Text>
+                                <Text style={styles.taskItemTitle} numberOfLines={1} ellipsizeMode="tail">{item.detail.name}</Text>
+                                <Text style={styles.taskItemSubtitle} numberOfLines={2} ellipsizeMode="tail">{item.detail.description}</Text>
                             </View>
-                        </View>
+                        </Pressable>
                     );
                 })}
             </View>
@@ -275,4 +289,11 @@ const styles = StyleSheet.create({
         gap: 4,
         flex: 1,
     },
+    footer: {
+        borderTopWidth: 1,
+        borderTopColor: Colors.light.border,
+        backgroundColor: 'white',
+        padding: 24,
+        flexDirection: 'row'
+    }
 });

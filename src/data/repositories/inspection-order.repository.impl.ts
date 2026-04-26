@@ -1,5 +1,6 @@
 import { InspectionOrderFilters, PaginatedResult } from "@/src/domain/entities/common";
 import { InspectionOrder } from "@/src/domain/entities/inspection-order.entity";
+import { ProgramDetail } from "@/src/domain/entities/program-detail.entity";
 import { IInspectionOrderRepository } from "@/src/domain/repositories/inspection-order.repository";
 import { IInspectionOrderRemoteDataSource } from "../data-sources/remote/inspection-order.remote.data-source";
 import { InspectionOrderMapper } from "../mappers/inspection-order.mapper";
@@ -25,4 +26,8 @@ export class InspectionOrderRepository implements IInspectionOrderRepository {
         return inspectionOrderModel ? InspectionOrderMapper.toDomain(inspectionOrderModel) : null;
     }
 
+    async getDetailProgram(id: string): Promise<ProgramDetail | null> {
+        const programDetailModel = await this.remoteDataSource.getProgramDetail(id);
+        return programDetailModel ? InspectionOrderMapper.toProgramDetailDomain(programDetailModel) : null;
+    }
 }

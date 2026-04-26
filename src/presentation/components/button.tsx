@@ -26,16 +26,16 @@ export default function Button({ onPress, label, disabled = false, variant = 'pr
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: Colors.light.tint,
-        alignItems: 'center',
-        padding: 14,
-        borderRadius: 8,
-        elevation: 2,
         flex: 1,
+        paddingVertical: 14,
+        backgroundColor: Colors.light.tint,
+        borderRadius: 10,
+        alignItems: 'center',
+        elevation: 1,
     },
     buttonLabel: {
-        color: 'white',
+        color: '#fff',
         fontSize: 16,
-        fontFamily: Fonts?.sansM,
+        fontFamily: Fonts?.sansSB,
     },
 });

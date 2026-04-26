@@ -8,6 +8,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 SplashScreen.preventAutoHideAsync();
@@ -74,15 +75,17 @@ export default function RootLayout() {
   }
 
   return (
-    <SafeAreaProvider>
-      <ToastProvider>
-        <AuthProvider>
-          <ThemeProvider value={DefaultTheme}>
-            <RootLayoutNav />
-            <StatusBar style="dark" />
-          </ThemeProvider>
-        </AuthProvider>
-      </ToastProvider>
-    </SafeAreaProvider>
+    <KeyboardProvider>
+      <SafeAreaProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <ThemeProvider value={DefaultTheme}>
+              <RootLayoutNav />
+              <StatusBar style="dark" />
+            </ThemeProvider>
+          </AuthProvider>
+        </ToastProvider>
+      </SafeAreaProvider>
+    </KeyboardProvider>
   )
 }
